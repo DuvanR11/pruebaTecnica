@@ -6,9 +6,9 @@ import org.example.pruebatecnica.dominio.transaction.Transaction;
 import java.util.List;
 
 public interface ProductService {
-    Product createProduct(Client clientId, String type, String status, Integer number, Integer balance, Boolean gmf);
+    Product createProduct(Client clientId, ProductType type, Integer balance, Boolean gmf);
 
-    Product updateProduct(Long productId, String type, String status, Integer number, Integer balance, Boolean gmf);
+    Product updateProduct(Long productId, ProductType type, ProductStatus status, String number, Integer balance, Boolean gmf);
 
     String deleteProduct(Long productId);
 

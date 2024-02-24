@@ -41,6 +41,7 @@ public class ProductRepositoryImpl implements ProductRepository {
         clientEntity.setName(client.getName());
         clientEntity.setLastName(client.getLastName());
         clientEntity.setEmail(client.getEmail());
+        clientEntity.setAge(client.getAge());
         clientEntity.setCreateDate(client.getCreateDate());
         clientEntity.setUpdateDate(client.getUpdateDate());
 
@@ -58,10 +59,9 @@ public class ProductRepositoryImpl implements ProductRepository {
         client.setName(clientEntity.getName());
         client.setLastName(clientEntity.getLastName());
         client.setEmail(clientEntity.getEmail());
+        client.setAge(clientEntity.getAge());
         client.setCreateDate(clientEntity.getCreateDate());
         client.setUpdateDate(clientEntity.getUpdateDate());
-
-        // Puedes establecer los productos asociados si es necesario
 
         return client;
     }
@@ -86,18 +86,14 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Transactional
     public Product save(Product product) {
         ProductEntity productEntity = convertToEntity(product);
-        System.out.println(product);
         if (product.getId() == null) {
-            System.out.println("Creando---");
             Date currentDate = new Date();
             productEntity.setCreateDate(currentDate);
             productEntity.setUpdateDate(currentDate);
-
             entityManager.persist(productEntity);
 
             product.setId(productEntity.getId());
         } else {
-            System.out.println("Actualizando ---");
             productEntity.setUpdateDate(new Date());
             entityManager.merge(productEntity);
         }
@@ -110,7 +106,6 @@ public class ProductRepositoryImpl implements ProductRepository {
         ProductEntity productEntity = entityManager.find(ProductEntity.class, productId);
 
         if (productEntity != null) {
-            System.out.println("trayendo----------");
             return convertToProduct(productEntity);
         } else {
             return null;
@@ -118,7 +113,6 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
     @Override
     public List<Product> findAllByClientId(Long clientId) {
-        System.out.println("búsqueda: " + clientId);
         return entityManager.createQuery(
                         "SELECT p FROM ProductEntity p WHERE p.client.id = :clientId", Product.class)
                 .setParameter("clientId", clientId)

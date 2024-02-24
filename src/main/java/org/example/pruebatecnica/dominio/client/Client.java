@@ -13,17 +13,19 @@ public class Client {
     private String identificationNumber;
     private String name;
     private String lastName;
+    private Integer age;
     private String email;
     private List<Product> products;
     private Date createDate;
     private Date updateDate;
 
-    public Client(String typeIdentification, String identificationNumber, String name, String lastName, String email, List<Product> products) {
+    public Client(String typeIdentification, String identificationNumber, String name, String lastName, String email, Integer age, List<Product> products) {
         this.typeIdentification = typeIdentification;
         this.identificationNumber = identificationNumber;
         this.name = name;
         this.lastName = lastName;
         this.email = email;
+        this.age = age;
         this.products = products;
     }
 
@@ -75,10 +77,15 @@ public class Client {
         this.email = email;
     }
 
-    public List<Product> getProducts() {
-        return products;
+    public Integer getAge() {
+        return age;
     }
 
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public List<Product> getProducts() { return products; }
     public void setProducts(List<Product> products) {
         this.products = products;
     }
@@ -98,4 +105,5 @@ public class Client {
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
     }
+
 }

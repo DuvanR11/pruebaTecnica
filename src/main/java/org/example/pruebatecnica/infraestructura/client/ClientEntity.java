@@ -1,11 +1,14 @@
 package org.example.pruebatecnica.infraestructura.client;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.example.pruebatecnica.infraestructura.producto.ProductEntity;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,6 +34,7 @@ public class ClientEntity {
     private String lastName;
 
     private String email;
+    private Integer age;
 
     @Column(name = "create_date")
     private Date createDate;
@@ -39,7 +43,13 @@ public class ClientEntity {
     private Date updateDate;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<ProductEntity> products;
+
+
+    public ClientEntity() {
+        this.products = new ArrayList<>();
+    }
 
 }
 

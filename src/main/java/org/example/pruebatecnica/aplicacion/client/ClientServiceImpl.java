@@ -1,9 +1,11 @@
 package org.example.pruebatecnica.aplicacion.client;
 
+import org.apache.coyote.BadRequestException;
 import org.example.pruebatecnica.dominio.client.Client;
 import org.example.pruebatecnica.dominio.client.ClientService;
 import org.example.pruebatecnica.dominio.product.Product;
 import org.example.pruebatecnica.infraestructura.client.ClientRepositoryImpl;
+import org.example.pruebatecnica.presentacion.dto.ClientDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,23 +18,51 @@ public class ClientServiceImpl implements ClientService {
     @Autowired
     private ClientRepositoryImpl clientRepositoryImpl;
 
-    @Override
-    public Client createClient(String typeIdentification, String identificationNumber, String name, String lastName, String email ) {
-        List<Product> products = new ArrayList<>();
-        return clientRepositoryImpl.save(new Client(typeIdentification, identificationNumber, name, lastName, email, products ));
+    private boolean isValidEmail(String email) {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        return email.matches(emailRegex);
     }
 
     @Override
-    public Client updateClient(Long clientId, String typeIdentification, String identificationNumber, String name, String lastName, String email ) {
+    public Client createClient(ClientDTO client) {
+
+        if (client.getAge() < 18) {
+            throw new IllegalArgumentException("EL cliente debe ser mayor de edad");
+        }
+
+        if (!isValidEmail(client.getEmail())) {
+            throw new IllegalArgumentException("Formato de correo electrónico no válido");
+        }
+
+        if (client.getName().length() < 2 || client.getLastName().length() < 2) {
+            throw new IllegalArgumentException("La longitud del nombre y apellido debe ser al menos de 2 caracteres");
+        }
+
+        List<Product> products = new ArrayList<>();
+
+        Client newClient = new Client(client.getTypeIdentification(),
+                client.getIdentificationNumber(),
+                client.getName(),
+                client.getLastName(),
+                client.getEmail(),
+                client.getAge(),
+                products);
+
+        return clientRepositoryImpl.save(newClient);
+    }
+
+
+    @Override
+    public Client updateClient(Long clientId, ClientDTO client ) {
         Client existingClient = clientRepositoryImpl.findById(clientId);
         if (existingClient != null) {
 
-            existingClient.setTypeIdentification(typeIdentification);
-            existingClient.setIdentificationNumber(identificationNumber);
-            existingClient.setName(name);
-            existingClient.setLastName(lastName);
-            existingClient.setEmail(email);
-
+            existingClient.setTypeIdentification(client.getTypeIdentification());
+            existingClient.setIdentificationNumber(client.getIdentificationNumber());
+            existingClient.setName(client.getName());
+            existingClient.setLastName(client.getLastName());
+            existingClient.setEmail(client.getEmail());
+            existingClient.setAge(client.getAge());
 
             return clientRepositoryImpl.save(existingClient);
         }
@@ -40,13 +70,17 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public String deleteClient(Long clientId) {
+    public void deleteClient(Long clientId) {
         Client existingClient = clientRepositoryImpl.findById(clientId);
-        if (existingClient != null) {
-            clientRepositoryImpl.delete(existingClient);
-            return "Cliente eliminado";
+        if (existingClient == null) {
+            throw new IllegalArgumentException("Cliente no encontrado con ID: " + clientId);
         }
-        return "Cliente no existente";
+
+//        if (existingClient.getProducts()) {
+//            throw new IllegalStateException("No se puede eliminar el cliente porque tiene productos asociados");
+//        }
+
+        clientRepositoryImpl.delete(existingClient);
     }
 
     @Override

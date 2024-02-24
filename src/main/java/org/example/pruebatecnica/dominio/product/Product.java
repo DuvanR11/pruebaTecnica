@@ -8,9 +8,9 @@ import java.util.List;
 
 public class Product {
     private Long id;
-    private String type;
-    private String status;
-    private Integer number;
+    private ProductType type;
+    private ProductStatus status;
+    private String number;
     private Integer balance;
     private Boolean gmf;
     private Date createDate;
@@ -19,7 +19,7 @@ public class Product {
     private List<Transaction> transactions;
 
 
-    public Product(Client client, String type, String status, Integer number, Integer balance, Boolean gmf, List<Transaction> transactions) {
+    public Product(Client client, ProductType type, ProductStatus status, String number, Integer balance, Boolean gmf, List<Transaction> transactions) {
         this.type = type;
         this.status = status;
         this.number = number;
@@ -39,27 +39,27 @@ public class Product {
         this.id = id;
     }
 
-    public String getType() {
+    public ProductType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ProductType type) {
         this.type = type;
     }
 
-    public String getStatus() {
+    public ProductStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(ProductStatus status) {
         this.status = status;
     }
 
-    public Integer getNumber() {
+    public String getNumber() {
         return number;
     }
 
-    public void setNumber(Integer number) {
+    public void setNumber(String number) {
         this.number = number;
     }
 
