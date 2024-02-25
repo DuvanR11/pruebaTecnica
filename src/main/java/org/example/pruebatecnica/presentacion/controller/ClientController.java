@@ -39,7 +39,7 @@ public class ClientController {
         try {
             Client client = convertDtoToDomainClient(clientDTO);
             Client updateClient = clientServiceImpl.updateClient(clientId, client);
-            return new ResponseEntity<>(updateClient, HttpStatus.CREATED);
+            return new ResponseEntity<>(updateClient, HttpStatus.OK);
         }catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -56,8 +56,13 @@ public class ClientController {
     }
 
     @GetMapping
-    public List<Client> getAllClients() {
-        return clientServiceImpl.getAllClients();
+    public ResponseEntity<Object> getAllClients() {
+        try {
+            List<Client> clients = clientServiceImpl.getAllClients();
+            return new ResponseEntity<>(clients, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/{clientId}")

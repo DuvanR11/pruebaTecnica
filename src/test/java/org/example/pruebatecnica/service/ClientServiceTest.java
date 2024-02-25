@@ -1,2 +1,4 @@
-package org.example.pruebatecnica.service;public class ClientServiceTest {
+package org.example.pruebatecnica.service;
+
+public class ClientServiceTest {
 }

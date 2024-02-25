@@ -117,7 +117,6 @@ public class Client {
 
     public void validateAge(Integer age) {
         if (age == null) {
-            // Puedes decidir cómo manejar el caso en que la edad es nula
             throw new IllegalArgumentException("La edad no puede ser nula");
         }
 
@@ -133,7 +132,6 @@ public class Client {
     }
 
     public boolean canAddProduct(ProductType newProductType) {
-        System.out.println("los products -------- " + products);
         long cuentaCorrienteCount = products.stream()
                 .filter(p -> p.getType() == ProductType.CUENTA_CORRIENTE)
                 .count();

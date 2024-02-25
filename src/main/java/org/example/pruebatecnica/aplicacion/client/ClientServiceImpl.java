@@ -72,15 +72,16 @@ public class ClientServiceImpl implements ClientService {
         clientRepositoryImpl.delete(existingClient);
     }
 
-
     @Override
     public List<Client> getAllClients() {
         List<ClientEntity> clientEntities = clientRepositoryImpl.findAll();
+        if (clientEntities.isEmpty()) {
+            throw new IllegalArgumentException("No hay clientes registrados");
+        }
         return clientEntities.stream()
                 .map(ClientEntityMapper::convertToEntityDomainClient)
                 .collect(Collectors.toList());
     }
-
 
     @Override
     public Client getClientById(Long clientId) {

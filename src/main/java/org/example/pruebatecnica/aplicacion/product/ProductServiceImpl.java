@@ -34,10 +34,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product createProduct(Product product) {
 
-        if (product.getClient().getId() == null) {
-            throw new IllegalArgumentException("El producto se debe asociar a un cliente");
-        }
-
         ClientEntity clientEntity = clientRepositoryImpl.findById(product.getClient().getId())
                 .orElseThrow(() -> new IllegalArgumentException("Cliente no encontrado con ID: " + product.getClient().getId()));
 

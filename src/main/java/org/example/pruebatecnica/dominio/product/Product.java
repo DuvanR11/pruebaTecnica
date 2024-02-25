@@ -30,6 +30,15 @@ public class Product {
         this.transactions = new ArrayList<>();;
     }
 
+    public Product(Client client, ProductType type, ProductStatus status, Integer balance, Boolean gmf ) {
+        this.client = client;
+        this.type = type;
+        this.status = status;
+        this.balance = balance;
+        this.gmf = gmf;
+        this.transactions = new ArrayList<>();;
+    }
+
     public Product() {}
 
     public Long getId() {

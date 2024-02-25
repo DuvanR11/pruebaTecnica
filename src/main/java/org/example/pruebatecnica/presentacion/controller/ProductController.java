@@ -1,6 +1,7 @@
 package org.example.pruebatecnica.presentacion.controller;
 
 import org.example.pruebatecnica.aplicacion.product.ProductServiceImpl;
+import org.example.pruebatecnica.dominio.client.Client;
 import org.example.pruebatecnica.dominio.product.Product;
 import org.example.pruebatecnica.presentacion.dto.ProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.example.pruebatecnica.aplicacion.client.ClientMapper.convertDtoToDomainClient;
 import static org.example.pruebatecnica.aplicacion.product.ProductMapper.convertDtoToDomainProduct;
 
 
@@ -37,9 +39,14 @@ public class ProductController {
     }
 
     @PutMapping("/{productId}")
-    public Product updateProduct(@PathVariable Long productId, @RequestBody ProductDTO productDTO) {
-        Product product = convertDtoToDomainProduct(productDTO);
-        return productServiceImpl.updateProduct(productId, product);
+    public ResponseEntity<Object> updateProduct(@PathVariable Long productId, @RequestBody ProductDTO productDTO) {
+        try {
+            Product product = convertDtoToDomainProduct(productDTO);
+            Product updateProduct = productServiceImpl.updateProduct(productId, product);
+            return new ResponseEntity<>(updateProduct, HttpStatus.OK);
+        }catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @DeleteMapping("/{productId}")
@@ -58,8 +65,13 @@ public class ProductController {
     }
 
     @GetMapping("/{productId}")
-    public ResponseEntity<Product> getProductById(@PathVariable Long productId) {
-        Product product = productServiceImpl.getProductById(productId);
-        return new ResponseEntity<>(product, HttpStatus.OK);
+    public ResponseEntity<Object> getProductById(@PathVariable Long productId) {
+        try {
+            Product product = productServiceImpl.getProductById(productId);
+            return new ResponseEntity<>(product, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+
 }

@@ -1,7 +1,7 @@
 version: '1'
 services:
   app:
-    image: bank
+    image: prueba-tecnica
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/bank
       SPRING_DATASOURCE_USERNAME: root

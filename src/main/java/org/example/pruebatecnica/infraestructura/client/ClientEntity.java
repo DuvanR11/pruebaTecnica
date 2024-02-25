@@ -3,8 +3,7 @@ package org.example.pruebatecnica.infraestructura.client;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.example.pruebatecnica.dominio.client.ClientTypeIdentification;
 import org.example.pruebatecnica.infraestructura.producto.ProductEntity;
 
@@ -16,6 +15,10 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "client")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ClientEntity {
 
     @Id
@@ -47,10 +50,14 @@ public class ClientEntity {
     @JsonBackReference
     private List<ProductEntity> products;
 
-
-    public ClientEntity() {
-        this.products = new ArrayList<>();
+    public ClientEntity(Long id, ClientTypeIdentification typeIdentification, String identificationNumber, String name, String lastName, String email, Integer age) {
+        this.id = id;
+        this.typeIdentification = typeIdentification;
+        this.identificationNumber = identificationNumber;
+        this.name = name;
+        this.lastName = lastName;
+        this.email = email;
+        this.age = age;
     }
-
 }
 
