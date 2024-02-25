@@ -1,16 +1,13 @@
 package org.example.pruebatecnica.dominio.product;
 
-import org.example.pruebatecnica.dominio.client.Client;
-import org.example.pruebatecnica.dominio.transaction.Transaction;
-
 import java.util.List;
 
 public interface ProductService {
-    Product createProduct(Client clientId, ProductType type, Integer balance, Boolean gmf);
+    Product createProduct(Product product);
 
-    Product updateProduct(Long productId, ProductType type, ProductStatus status, String number, Integer balance, Boolean gmf);
+    Product updateProduct(Long productId, Product product);
 
-    String deleteProduct(Long productId);
+    void deleteProduct(Long productId);
 
     List<Product> getAllProductsByClientId(Long clientId);
 

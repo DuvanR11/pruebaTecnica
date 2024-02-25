@@ -2,15 +2,17 @@ package org.example.pruebatecnica.presentacion.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.example.pruebatecnica.dominio.product.Product;
+import org.example.pruebatecnica.dominio.transaction.TransactionType;
+
 
 import java.util.Date;
 
 @Setter
 @Getter
 public class TransactionDTO {
-    private String type;
+    private TransactionType type;
     private Integer amount;
     private Date createDate;
-    private Product product;
+    private ProductDTO product;
+    private ProductDTO destinationProduct;
 }

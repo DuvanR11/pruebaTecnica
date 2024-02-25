@@ -2,6 +2,7 @@ package org.example.pruebatecnica.dominio.client;
 
 
 import org.example.pruebatecnica.dominio.product.Product;
+import org.example.pruebatecnica.dominio.product.ProductType;
 
 import java.util.Date;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
 
 public class Client {
     private Long id;
-    private String typeIdentification;
+    private ClientTypeIdentification typeIdentification;
     private String identificationNumber;
     private String name;
     private String lastName;
@@ -19,14 +20,15 @@ public class Client {
     private Date createDate;
     private Date updateDate;
 
-    public Client(String typeIdentification, String identificationNumber, String name, String lastName, String email, Integer age, List<Product> products) {
+    public Client(Long id, ClientTypeIdentification typeIdentification, String identificationNumber, String name, String lastName, String email, Integer age) {
+        this.id = id;
         this.typeIdentification = typeIdentification;
         this.identificationNumber = identificationNumber;
         this.name = name;
         this.lastName = lastName;
         this.email = email;
         this.age = age;
-        this.products = products;
+        //this.products = products;
     }
 
     public Client() {}
@@ -37,11 +39,11 @@ public class Client {
         this.id = id;
     }
 
-    public String getTypeIdentification() {
+    public ClientTypeIdentification getTypeIdentification() {
         return typeIdentification;
     }
 
-    public void setTypeIdentification(String typeIdentification) {
+    public void setTypeIdentification(ClientTypeIdentification typeIdentification) {
         this.typeIdentification = typeIdentification;
     }
 
@@ -106,4 +108,64 @@ public class Client {
         this.updateDate = updateDate;
     }
 
+    public void isValidEmail(String email) {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        if (!email.matches(emailRegex)) {
+            throw new IllegalArgumentException("Formato de correo electrónico no válido");
+        }
+    }
+
+    public void validateAge(Integer age) {
+        if (age == null) {
+            // Puedes decidir cómo manejar el caso en que la edad es nula
+            throw new IllegalArgumentException("La edad no puede ser nula");
+        }
+
+        if (age < 18) {
+            throw new IllegalArgumentException("El cliente debe ser mayor de edad");
+        }
+    }
+
+    public void validateFirstNameAndLastName(String name, String lastName) {
+        if (name.length() < 2 || lastName.length() < 2) {
+            throw new IllegalArgumentException("La longitud del nombre y apellido debe ser al menos de 2 caracteres");
+        }
+    }
+
+    public boolean canAddProduct(ProductType newProductType) {
+        System.out.println("los products -------- " + products);
+        long cuentaCorrienteCount = products.stream()
+                .filter(p -> p.getType() == ProductType.CUENTA_CORRIENTE)
+                .count();
+
+        long cuentaDeAhorrosCount = products.stream()
+                .filter(p -> p.getType() == ProductType.CUENTA_DE_AHORROS)
+                .count();
+
+        if (newProductType == ProductType.CUENTA_CORRIENTE && cuentaCorrienteCount >= 1) {
+            return false;
+        }
+
+        if (newProductType == ProductType.CUENTA_DE_AHORROS && cuentaDeAhorrosCount >= 1) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Client{" +
+                "id=" + id +
+                ", typeIdentification=" + typeIdentification +
+                ", identificationNumber='" + identificationNumber + '\'' +
+                ", name='" + name + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", age=" + age +
+                ", email='" + email + '\'' +
+                ", products=" + products +
+                ", createDate=" + createDate +
+                ", updateDate=" + updateDate +
+                '}';
+    }
 }

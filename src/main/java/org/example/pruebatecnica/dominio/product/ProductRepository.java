@@ -1,9 +1,11 @@
 package org.example.pruebatecnica.dominio.product;
 
+import org.example.pruebatecnica.infraestructura.producto.ProductEntity;
+
 import java.util.List;
 
 public interface ProductRepository {
-    Product save(Product product);
+    ProductEntity save(ProductEntity product);
 
     Product findById(Long productId);
 

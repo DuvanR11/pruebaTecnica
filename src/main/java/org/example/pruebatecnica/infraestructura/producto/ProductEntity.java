@@ -1,6 +1,5 @@
 package org.example.pruebatecnica.infraestructura.producto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,11 +33,12 @@ public class ProductEntity {
     private Date createDate;
     @Column(name = "update_date")
     private Date updateDate;;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")
-    @JsonIgnore
     private ClientEntity client;
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<TransactionEntity> transactions;
+    @OneToMany(mappedBy = "destinationProduct")
+    private List<TransactionEntity> destinationTransactions;
 }
 

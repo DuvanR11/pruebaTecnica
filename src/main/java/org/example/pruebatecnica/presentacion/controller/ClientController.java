@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.example.pruebatecnica.aplicacion.client.ClientMapper.convertDtoToDomainClient;
+
 @RestController
 @RequestMapping("/clients")
 public class ClientController {
@@ -24,7 +26,8 @@ public class ClientController {
     @PostMapping
     public ResponseEntity<Object> createClient(@RequestBody ClientDTO clientDTO) {
         try {
-            Client createdClient = clientServiceImpl.createClient(clientDTO);
+            Client client = convertDtoToDomainClient(clientDTO);
+            Client createdClient = clientServiceImpl.createClient(client);
             return new ResponseEntity<>(createdClient, HttpStatus.CREATED);
         }catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -32,8 +35,14 @@ public class ClientController {
     }
 
     @PutMapping("/{clientId}")
-    public Client updateClient(@PathVariable Long clientId, @RequestBody ClientDTO clientDTO) {
-        return clientServiceImpl.updateClient(clientId, clientDTO);
+    public ResponseEntity<Object> updateClient(@PathVariable Long clientId, @RequestBody ClientDTO clientDTO) {
+        try {
+            Client client = convertDtoToDomainClient(clientDTO);
+            Client updateClient = clientServiceImpl.updateClient(clientId, client);
+            return new ResponseEntity<>(updateClient, HttpStatus.CREATED);
+        }catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @DeleteMapping("/{clientId}")
@@ -52,7 +61,13 @@ public class ClientController {
     }
 
     @GetMapping("/{clientId}")
-    public Client getClientById(@PathVariable Long clientId) {
-        return clientServiceImpl.getClientById(clientId);
+    public ResponseEntity<Object> getClientById(@PathVariable Long clientId) {
+        try {
+            Client getClient = clientServiceImpl.getClientById(clientId);
+            return new ResponseEntity<>(getClient, HttpStatus.ACCEPTED);
+        }catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
+
 }

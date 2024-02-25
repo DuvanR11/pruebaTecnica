@@ -6,15 +6,18 @@ import java.util.Date;
 
 public class Transaction {
     private Long id;
-    private String type;
+    private TransactionType type;
     private Integer amount;
     private Date createDate;
     private Product product;
+    private Product destinationProduct;
 
-    public Transaction(String type, Integer amount, Product product) {
+    public Transaction(TransactionType type, Integer amount, Product product, Product destinationProduct ) {
         this.type = type;
         this.amount = amount;
         this.product = product;
+        this.destinationProduct = destinationProduct;
+
     }
 
     public Transaction() {}
@@ -27,11 +30,11 @@ public class Transaction {
         this.id = id;
     }
 
-    public String getType() {
+    public TransactionType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(TransactionType type) {
         this.type = type;
     }
 
@@ -57,5 +60,25 @@ public class Transaction {
 
     public void setProduct(Product product) {
         this.product = product;
+    }
+
+    public Product getDestinationProduct() {
+        return destinationProduct;
+    }
+
+    public void setDestinationProduct(Product destinationProduct) {
+        this.destinationProduct = destinationProduct;
+    }
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "id=" + id +
+                ", type=" + type +
+                ", amount=" + amount +
+                ", createDate=" + createDate +
+                ", product=" + product +
+                ", destinationProduct=" + destinationProduct +
+                '}';
     }
 }

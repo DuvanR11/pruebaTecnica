@@ -1,18 +1,23 @@
 package org.example.pruebatecnica.aplicacion.product;
 
 import org.example.pruebatecnica.dominio.client.Client;
-import org.example.pruebatecnica.dominio.product.Product;
-import org.example.pruebatecnica.dominio.product.ProductService;
-import org.example.pruebatecnica.dominio.product.ProductStatus;
-import org.example.pruebatecnica.dominio.product.ProductType;
-import org.example.pruebatecnica.dominio.transaction.Transaction;
+import org.example.pruebatecnica.dominio.product.*;
+import org.example.pruebatecnica.infraestructura.client.ClientEntity;
+import org.example.pruebatecnica.infraestructura.client.ClientRepositoryImpl;
+import org.example.pruebatecnica.infraestructura.producto.ProductEntity;
+import org.example.pruebatecnica.infraestructura.producto.ProductEntityMapper;
 import org.example.pruebatecnica.infraestructura.producto.ProductRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Random;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static org.example.pruebatecnica.infraestructura.client.ClientEntityMapper.convertToEntityDomainClient;
+import static org.example.pruebatecnica.infraestructura.producto.ProductEntityMapper.*;
+
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -20,76 +25,90 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepositoryImpl productRepositoryImpl;
 
+    @Autowired
+    private ClientRepositoryImpl clientRepositoryImpl;
+
+    @Autowired
+    private AccountNumberServiceImpl accountNumberServiceImpl;
+
     @Override
-    public Product createProduct(Client clientId, ProductType type, Integer balance, Boolean gmf) {
-        if (clientId == null) {
+    public Product createProduct(Product product) {
+
+        if (product.getClient().getId() == null) {
             throw new IllegalArgumentException("El producto se debe asociar a un cliente");
         }
 
-        ProductStatus status = ProductStatus.ACTIVA;
+        ClientEntity clientEntity = clientRepositoryImpl.findById(product.getClient().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Cliente no encontrado con ID: " + product.getClient().getId()));
 
-        String generatedNumber = generateAccountNumber(type);
-        List<Transaction> transactions = new ArrayList<>();
-        return productRepositoryImpl.save(new Product(clientId, type, status, generatedNumber, balance, gmf, transactions));
-    }
+        Client client = convertToEntityDomainClient(clientEntity);
 
-    private String generateAccountNumber(ProductType type) {
-        String prefix = (type == ProductType.CUENTA_DE_AHORROS) ? "53" : "33";
-        return prefix + generateRandomDigits(8);
-    }
+        if (client.canAddProduct(product.getType())) {
 
-    private String generateRandomDigits(int numberOfDigits) {
-        // Lógica para generar una cadena de dígitos numéricos aleatorios
-        Random random = new Random();
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < numberOfDigits; i++) {
-            sb.append(random.nextInt(10));
+            ProductEntity productEntity = convertToEntityProduct(product);
+            productEntity.setClient(clientEntity);
+            productEntity.setStatus(ProductStatus.ACTIVA);
+            productEntity.setCreateDate(new Date());
+            productEntity.setUpdateDate(new Date());
+
+            productEntity.setNumber(accountNumberServiceImpl.generateAccountNumber(product.getType()));
+            return convertToEntityDomainProduct(productRepositoryImpl.save(productEntity));
+        } else {
+            throw new IllegalArgumentException("El cliente ya tiene un producto de este tipo");
         }
-        return sb.toString();
-    }
 
+    }
 
 
     @Override
-    public Product updateProduct(Long productId, ProductType type, ProductStatus status, String number, Integer balance, Boolean gmf) {
-        Product existingProduct = productRepositoryImpl.findById(productId);
-        if (existingProduct != null) {
+    public Product updateProduct(Long productId, Product product) {
+        return productRepositoryImpl.findById(productId)
+                .map(existingProduct -> {
+                    existingProduct.setType(product.getType());
+                    existingProduct.setStatus(product.getStatus() != null ? product.getStatus() : ProductStatus.ACTIVA);
+                    existingProduct.setBalance(product.getBalance());
+                    existingProduct.setGmf(product.getGmf());
+                    existingProduct.setUpdateDate(new Date());
 
-            existingProduct.setType(type);
-            existingProduct.setStatus(status);
-            existingProduct.setNumber(number);
-            existingProduct.setBalance(balance);
-            existingProduct.setGmf(gmf);
-
-            return productRepositoryImpl.save(existingProduct);
-        }
-        return null;
+                    return convertToEntityDomainProduct(productRepositoryImpl.save(existingProduct));
+                })
+                .orElse(null);
     }
 
     @Override
-    public String deleteProduct(Long productId) {
-        Product existingProduct = productRepositoryImpl.findById(productId);
+    public void deleteProduct(Long productId) {
+        Optional<ProductEntity> existingProductOptional = productRepositoryImpl.findById(productId);
 
-        if (existingProduct != null) {
-            if (existingProduct.getBalance() == 0) {
-                productRepositoryImpl.delete(existingProduct);
-                return "Cuenta eliminada";
-            } else {
-                return "No se puede eliminar la cuenta porque tiene un saldo diferente de $0";
-            }
+        if (existingProductOptional.isEmpty()) {
+            throw new IllegalArgumentException("Producto no encontrado con ID: " + productId);
         }
 
-        return "Cuenta no existente";
-    }
+        ProductEntity existingProduct = existingProductOptional.get();
+        if (existingProduct.getBalance() == 0) {
+            productRepositoryImpl.delete(existingProduct);
+        } else {
+            throw new IllegalArgumentException("No se puede eliminar la cuenta porque tiene un saldo diferente de $0");
+        }
 
+    }
 
     @Override
     public List<Product> getAllProductsByClientId(Long clientId) {
-        return productRepositoryImpl.findAllByClientId(clientId);
+        List<ProductEntity> products =  productRepositoryImpl.findAllByClientId(clientId);
+        return products.stream()
+                .map(ProductEntityMapper::convertToEntityDomainProduct)
+                .collect(Collectors.toList());
     }
 
     @Override
     public Product getProductById(Long productId) {
-        return productRepositoryImpl.findById(productId);
+        Optional<ProductEntity> existingProductOptional = productRepositoryImpl.findById(productId);
+
+        if (existingProductOptional.isEmpty()) {
+            throw new IllegalArgumentException("Producto no encontrado con ID: " + productId);
+        }
+
+        ProductEntity existingClient = existingProductOptional.get();
+        return convertToEntityDomainProduct(existingClient);
     }
 }

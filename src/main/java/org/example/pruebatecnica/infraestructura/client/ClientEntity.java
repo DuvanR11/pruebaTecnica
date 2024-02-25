@@ -2,10 +2,10 @@ package org.example.pruebatecnica.infraestructura.client;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.pruebatecnica.dominio.client.ClientTypeIdentification;
 import org.example.pruebatecnica.infraestructura.producto.ProductEntity;
 
 import java.util.ArrayList;
@@ -22,8 +22,9 @@ public class ClientEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "type_identification")
-    private String typeIdentification;
+    private ClientTypeIdentification typeIdentification;
 
     @Column(name = "identification_number")
     private String identificationNumber;
@@ -42,8 +43,8 @@ public class ClientEntity {
     @Column(name = "update_date")
     private Date updateDate;
 
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "client", cascade = CascadeType.ALL)
+    @JsonBackReference
     private List<ProductEntity> products;
 
 

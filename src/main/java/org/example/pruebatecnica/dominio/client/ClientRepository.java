@@ -5,7 +5,7 @@ import org.example.pruebatecnica.infraestructura.client.ClientEntity;
 import java.util.List;
 
 public interface ClientRepository {
-    Client save(Client client);
+    ClientEntity save(ClientEntity client);
 
     Client findById(Long clientId);
 

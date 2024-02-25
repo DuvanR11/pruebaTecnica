@@ -3,6 +3,7 @@ package org.example.pruebatecnica.dominio.product;
 import org.example.pruebatecnica.dominio.client.Client;
 import org.example.pruebatecnica.dominio.transaction.Transaction;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -19,14 +20,14 @@ public class Product {
     private List<Transaction> transactions;
 
 
-    public Product(Client client, ProductType type, ProductStatus status, String number, Integer balance, Boolean gmf, List<Transaction> transactions) {
+    public Product(Client client, ProductType type, ProductStatus status, String number, Integer balance, Boolean gmf ) {
+        this.client = client;
         this.type = type;
         this.status = status;
         this.number = number;
         this.balance = balance;
         this.gmf = gmf;
-        this.client = client;
-        this.transactions = transactions;
+        this.transactions = new ArrayList<>();;
     }
 
     public Product() {}
@@ -109,5 +110,58 @@ public class Product {
 
     public void setTransactions(List<Transaction> transactions) {
         this.transactions = transactions;
+    }
+
+    public void deposit(Integer amount) {
+        this.balance += amount;
+        updateDate = new Date();
+    }
+
+    public void withdraw(Integer amount) {
+        if (amount > balance) {
+            throw new IllegalArgumentException("Fondos insuficientes");
+        }
+        this.balance -= amount;
+        updateDate = new Date();
+    }
+
+    public void transfer(Integer amount, Product destinationProduct) {
+        System.out.println("incio plata " + destinationProduct.getBalance());
+        if (amount <= 0) {
+            throw new IllegalArgumentException("El monto debe ser positivo");
+        }
+
+        if (amount > balance) {
+            throw new IllegalArgumentException("Fondos insuficientes");
+        }
+
+        if (destinationProduct == null) {
+            throw new IllegalArgumentException("Producto de destino no puede ser nulo");
+        }
+
+
+        withdraw(amount);
+        destinationProduct.deposit(amount);
+
+        System.out.println("fin plata " + destinationProduct.getBalance());
+
+        updateDate = new Date();
+        destinationProduct.setUpdateDate(new Date());
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", type=" + type +
+                ", status=" + status +
+                ", number='" + number + '\'' +
+                ", balance=" + balance +
+                ", gmf=" + gmf +
+                ", createDate=" + createDate +
+                ", updateDate=" + updateDate +
+                ", client=" + client +
+                ", transactions=" + transactions +
+                '}';
     }
 }

@@ -1,14 +1,12 @@
 package org.example.pruebatecnica.dominio.client;
 
-import org.example.pruebatecnica.presentacion.dto.ClientDTO;
-
 import java.util.List;
 
 public interface ClientService {
 
-    Client createClient( ClientDTO client );
+    Client createClient( Client client );
 
-    Client updateClient(Long clientId, ClientDTO client );
+    Client updateClient(Long clientId, Client client );
 
     void deleteClient(Long clientId);
 
