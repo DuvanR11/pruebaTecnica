@@ -2,40 +2,36 @@
 Este proyecto Java utiliza Docker para facilitar la ejecución y despliegue. Sigue las instrucciones a continuación para configurar y ejecutar el proyecto utilizando Docker y Docker Compose.
 
 ## Requisitos Previos
-Docker debe estar instalado en tu sistema.
-Instrucciones para Ejecutar el Proyecto
-Clonar el Repositorio:
+* Docker debe estar instalado en tu sistema.
 
-bash
-Copy code
-git clone https://github.com/DuvanR11/pruebaTecnica.git
-cd pruebaTecnica
-Construir la Imagen Docker:
+### Instrucciones para Ejecutar el Proyecto
+* Clonar el Repositorio:
 
-bash
-Copy code
-docker build -t prueba-tecnica .
-Ejecutar el Contenedor usando Docker Compose:
+* Copy code
+* git clone https://github.com/DuvanR11/pruebaTecnica.git
+* cd pruebaTecnica
+  
+### Construir la Imagen Docker:
 
-bash
-Copy code
-docker-compose up -d
-Esto iniciará dos servicios: app (la aplicación Spring Boot) y mysql (la base de datos MySQL).
+* Copy code
+ docker build -t prueba-tecnica .
+  
+### Ejecutar el Contenedor usando Docker Compose:
 
-## Acceder a MySQL:
+* Copy code
+* docker-compose up -d
+* Esto iniciará dos servicios: app (la aplicación Spring Boot) y mysql (la base de datos MySQL).
 
-Abre tu cliente MySQL y conecta a la base de datos con las siguientes credenciales:
-Host: localhost
-Puerto: 3306
-Usuario: root
-Contraseña: (deja en blanco)
-Crea la base de datos bank.
-Acceder a la Aplicación:
+### Acceder a MySQL:
 
-La aplicación estará disponible en http://localhost:8080.
+* Abre tu cliente MySQL y conecta a la base de datos con las siguientes credenciales:
+* Host: localhost
+* Puerto: 3306
+* Usuario: root
+* Contraseña: (deja en blanco)
+* Crea la base de datos bank.
 
-Detener y Limpiar los Contenedores:
+### Acceder a la Aplicación:
 
-bash
-Copy code
-docker-compose down
+* La aplicación estará disponible en http://localhost:8080.
+
